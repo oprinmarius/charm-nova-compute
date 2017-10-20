@@ -225,6 +225,7 @@ class NovaComputeContextTests(CharmTestCase):
              'kvm_hugepages': 0,
              'listen_tls': 0,
              'host_uuid': self.host_uuid,
+             'force_raw_images': True,
              'reserved_host_memory': 512}, libvirt())
 
     def test_libvirt_bin_context_no_migration(self):
@@ -241,6 +242,7 @@ class NovaComputeContextTests(CharmTestCase):
              'kvm_hugepages': 0,
              'listen_tls': 0,
              'host_uuid': self.host_uuid,
+             'force_raw_images': True,
              'reserved_host_memory': 512}, libvirt())
 
     def test_libvirt_bin_context_migration_tcp_listen(self):
@@ -257,6 +259,7 @@ class NovaComputeContextTests(CharmTestCase):
              'kvm_hugepages': 0,
              'listen_tls': 0,
              'host_uuid': self.host_uuid,
+             'force_raw_images': True,
              'reserved_host_memory': 512}, libvirt())
 
     def test_libvirt_disk_cachemodes(self):
@@ -274,6 +277,7 @@ class NovaComputeContextTests(CharmTestCase):
              'kvm_hugepages': 0,
              'listen_tls': 0,
              'host_uuid': self.host_uuid,
+             'force_raw_images': True,
              'reserved_host_memory': 512}, libvirt())
 
     def test_libvirt_hugepages(self):
@@ -292,6 +296,25 @@ class NovaComputeContextTests(CharmTestCase):
              'kvm_hugepages': 1,
              'listen_tls': 0,
              'host_uuid': self.host_uuid,
+             'force_raw_images': True,
+             'reserved_host_memory': 512}, libvirt())
+
+    def test_libvirt_context_libvirtd_force_raw_images(self):
+        self.lsb_release.return_value = {'DISTRIB_CODENAME': 'zesty'}
+        self.os_release.return_value = 'ocata'
+        self.kv.return_value = FakeUnitdata(**{'host_uuid': self.host_uuid})
+        self.test_config.set('force-raw-images', False)
+        libvirt = context.NovaComputeLibvirtContext()
+
+        self.assertEqual(
+            {'libvirtd_opts': '',
+             'libvirt_user': 'libvirt',
+             'arch': platform.machine(),
+             'ksm': 'AUTO',
+             'kvm_hugepages': 0,
+             'listen_tls': 0,
+             'host_uuid': self.host_uuid,
+             'force_raw_images': False,
              'reserved_host_memory': 512}, libvirt())
 
     def test_lxd_live_migration_opts_xenial(self):
@@ -395,6 +418,7 @@ class NovaComputeContextTests(CharmTestCase):
              'host_uuid': self.host_uuid,
              'reserved_host_memory': 1024,
              'vcpu_pin_set': '^0^2',
+             'force_raw_images': True,
              'pci_passthrough_whitelist': 'mypcidevices'}, libvirt())
 
     def test_ksm_configs(self):
